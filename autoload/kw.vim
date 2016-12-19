@@ -345,13 +345,6 @@ if !exists("g:kw_settings")
         \ }
 endif
 
-if !exists("g:kw_comments")
-    let g:kw_comments = {
-        \ "Fix": "TP",
-        \ "Not a problem": "FP",
-        \ }
-endif
-
 if !exists("g:kw_last_comments")
     let g:kw_last_comments = g:kw_comments
 endif
@@ -361,7 +354,7 @@ if !exists("g:kw_statuses")
 endif
 
 if !exists("g:kw_status_history")
-    let g:kw_status_history = g:kw_statuses
+    let g:kw_status_history = get(g:, "kw_statuses", {})
 endif
 
 function! kw#update_checkers(codes) abort
