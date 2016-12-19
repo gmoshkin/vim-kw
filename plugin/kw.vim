@@ -1,4 +1,3 @@
-command! -nargs=1 KWFetchIssues %d | read !curl --data "action=search&user=gmoshkin&project=cudafy&query=<args>" http://localhost:9090/review/api
 "TODO: add completion for searchable queries
 command! -nargs=* KWSearchQueries %d <bar> call kw#search_queries(<q-args>)
 command! KWSearchLastQuery %d <bar> call kw#search_last_query() <bar> 1
