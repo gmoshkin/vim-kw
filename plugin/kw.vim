@@ -9,8 +9,8 @@ command! -nargs=* KWUpdateStatus call kw#update_status(<q-args>)
 command! KWFix call kw#update_status(input("Id: ", g:kw_current_issue_id), "Fix")
 command! KWNotAProblem call kw#update_status(input("Id: ", g:kw_current_issue_id), "Not a Problem")
 command! KWParseIssue call kw#parse_issue(getline('.'))
-command! KWParseNext call kw#parse_next()
-command! KWParsePrev call kw#parse_prev()
+command! KWNextIssue call kw#next_issue()
+command! KWPrevIssue call kw#prev_issue()
 command! KWCurrentStatus call kw#current_status()
 command! KWStats echo kw#get_stats()
 
@@ -19,7 +19,10 @@ nnoremap <leader>kwn :<C-U>KWNotAProblem<CR>
 nnoremap <leader>kwl :<C-U>KWSearchLastQuery<CR>
 nnoremap <leader>kwc :<C-U>KWLoadCode<CR>
 nnoremap <leader>kws :<C-U>KWCurrentStatus<CR>
-nnoremap <leader>kw> :<C-U>KWParseNext<CR>
-nnoremap <leader>kw< :<C-U>KWParsePrev<CR>
+nnoremap <leader>kw> :<C-U>KWNextIssue<CR>
+nnoremap <leader>kw< :<C-U>KWPrevIssue<CR>
 nnoremap <leader>kwp :<C-U>KWParseIssue<CR>
 nnoremap <leader>kw? :<C-U>KWStats<CR>
+nnoremap <leader>kwi :<C-U>KWIssue<CR>
+nnoremap ]I :<C-U>KWNextIssue<CR>
+nnoremap [I :<C-U>KWPrevIssue<CR>

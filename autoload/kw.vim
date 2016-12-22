@@ -609,15 +609,15 @@ function! kw#parse_issue(...) abort
     call setqflist(qf_list)
 endfunction
 
-function! kw#parse_prev() abort
-    call kw#_parse_next(-1)
+function! kw#prev_issue() abort
+    call kw#_next_issue(-1)
 endfunction
 
-function! kw#parse_next() abort
-    call kw#_parse_next(+1)
+function! kw#next_issue() abort
+    call kw#_next_issue(+1)
 endfunction
 
-function! kw#_parse_next(ofs) abort
+function! kw#_next_issue(ofs) abort
     let newindex = index(g:kw_issue_ids, g:kw_current_issue_id) + a:ofs
     if a:ofs > 0 && newindex > len(g:kw_issue_ids) - 1
         echo "Reached the last issue"
@@ -626,9 +626,13 @@ function! kw#_parse_next(ofs) abort
         echo "Reached the first issue"
         return
     endif
-    let g:kw_current_issue_id = g:kw_issue_ids[newindex]
+    call kw#select_issue(newindex)
+endfunction
+
+function! kw#select_issue(index) abort
+    let g:kw_current_issue_id = g:kw_issue_ids[a:index]
     call kw#parse_issue(g:kw_issues[g:kw_current_issue_id])
-    echo "Issue id: ".g:kw_current_issue_id." (".(newindex + 1)."/".len(g:kw_issues).") [".kw#get_current_status()."]"
+    echo "Issue id: ".g:kw_current_issue_id." (".(a:index + 1)."/".len(g:kw_issues).") [".kw#get_current_status()."]"
 endfunction
 
 function! kw#set_status(ids, status) abort
