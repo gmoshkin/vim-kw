@@ -356,31 +356,25 @@ function! kw#update_checkers(codes) abort
     "TODO
 endfunction
 
-function! kw#complete(list, ArgLead)
-    let tmp_list = copy(a:list)
-    call filter(tmp_list, 'v:val =~ "^'.a:ArgLead.'"')
-    return tmp_list
-endfunction
-
 function! kw#complete_checkers(ArgLead, CmdLine, CursorPos) abort
     " TODO: complete subcodes separated buy "."
-    return kw#complete(g:kw_checkers_cs + g:kw_checkers_cpp, a:ArgLead)
+    return kw#utils#complete(g:kw_checkers_cs + g:kw_checkers_cpp, a:ArgLead)
 endfunction
 
 function! kw#complete_projects(ArgLead, CmdLine, CursorPos) abort
-    return kw#complete(get(g:kw_history, "projects", []), a:ArgLead)
+    return kw#utils#complete(get(g:kw_history, "projects", []), a:ArgLead)
 endfunction
 
 function! kw#complete_comments(ArgLead, CmdLine, CursorPos) abort
-    return kw#complete(get(g:kw_history, "comments", []), a:ArgLead)
+    return kw#utils#complete(get(g:kw_history, "comments", []), a:ArgLead)
 endfunction
 
 function! kw#complete_status(ArgLead, CmdLine, CursorPos) abort
-    return kw#complete(get(g:kw_history, "status", []), a:ArgLead)
+    return kw#utils#complete(get(g:kw_history, "status", []), a:ArgLead)
 endfunction
 
 function! kw#complete_issue_ids(ArgLead, CmdLine, CursorPos) abort
-    let tmp_list = kw#complete(get(g:, "kw_issue_ids", []), a:ArgLead)
+    let tmp_list = kw#utils#complete(get(g:, "kw_issue_ids", []), a:ArgLead)
     call map(tmp_list, 'v:val.""')
     return tmp_list
 endfunction
