@@ -336,22 +336,6 @@ if !exists("g:kw_checkers_cpp")
         \ ]
 endif
 
-if !exists("g:kw_last_comments")
-    let g:kw_last_comments = g:kw_comments
-endif
-
-if !exists("g:kw_statuses")
-    let g:kw_statuses = [ "Fix", "Not a problem", "Fix in Next Release" ]
-endif
-
-if !exists("g:kw_history")
-    let g:kw_history = {
-            \ "status" : get(g:, "kw_statuses", []),
-            \ "comments" : [],
-            \ "projects" : get(g:, "kw_projects", []),
-        \ }
-endif
-
 function! kw#update_checkers(codes) abort
     "TODO
 endfunction
@@ -361,31 +345,10 @@ function! kw#complete_checkers(ArgLead, CmdLine, CursorPos) abort
     return kw#utils#complete(g:kw_checkers_cs + g:kw_checkers_cpp, a:ArgLead)
 endfunction
 
-function! kw#complete_projects(ArgLead, CmdLine, CursorPos) abort
-    return kw#utils#complete(get(g:kw_history, "projects", []), a:ArgLead)
-endfunction
-
-function! kw#complete_comments(ArgLead, CmdLine, CursorPos) abort
-    return kw#utils#complete(get(g:kw_history, "comments", []), a:ArgLead)
-endfunction
-
-function! kw#complete_status(ArgLead, CmdLine, CursorPos) abort
-    return kw#utils#complete(get(g:kw_history, "status", []), a:ArgLead)
-endfunction
-
 function! kw#complete_issue_ids(ArgLead, CmdLine, CursorPos) abort
     let tmp_list = kw#utils#complete(get(g:, "kw_issue_ids", []), a:ArgLead)
     call map(tmp_list, 'v:val.""')
     return tmp_list
-endfunction
-
-function! kw#add_to_history(type, value) abort
-    " TODO: sort the entries by time
-    let history = get(g:kw_history, a:type, [])
-    if !empty(a:value) && index(history, a:value) < 0
-        call add(history, a:value)
-        let g:kw_history[a:type] = history
-    endif
 endfunction
 
 function! kw#get_comment(status) abort
@@ -394,7 +357,7 @@ function! kw#get_comment(status) abort
         let default = get(g:kw_last_comments, a:status, "")
         call kw#add_to_history("comment", default)
     endif
-    let result = input("Comment: ", default, "customlist,kw#complete_comments")
+    let result = input("Comment: ", default, "customlist,kw#history#complete_comments")
     let g:kw_last_comments[a:status] = result
     call kw#add_to_history("comment", result)
     return result
@@ -415,7 +378,7 @@ function! kw#get_query(key) abort
             let g:kw_last_status = ""
         endif
         let default = g:kw_last_status
-        let res = input("Status: ", default, "customlist,kw#complete_status")
+        let res = input("Status: ", default, "customlist,kw#history#complete_status")
         let g:kw_last_status = res
         return "%2B".g:kw_last_status
     endif
@@ -626,7 +589,7 @@ function! kw#current_status(...) abort
         echoerr "g:kw_current_issue is not set"
         return
     endif
-    let new = input("Status: ", cur, "customlist,kw#complete_status")
+    let new = input("Status: ", cur, "customlist,kw#history#complete_status")
     call kw#add_to_history("status", new)
     if cur !=? new
         call kw#update_status(id, new)
