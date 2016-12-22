@@ -620,15 +620,15 @@ function! kw#parse_issue(...) abort
     call setqflist(qf_list)
 endfunction
 
-function! kw#prev_issue() abort
-    call kw#_next_issue(-1)
+function! kw#prev_issue(jump) abort
+    call kw#_next_issue(-1, a:jump)
 endfunction
 
-function! kw#next_issue() abort
-    call kw#_next_issue(+1)
+function! kw#next_issue(jump) abort
+    call kw#_next_issue(+1, a:jump)
 endfunction
 
-function! kw#_next_issue(ofs) abort
+function! kw#_next_issue(ofs, jump) abort
     let newindex = index(g:kw_issue_ids, g:kw_current_issue_id) + a:ofs
     if a:ofs > 0 && newindex > len(g:kw_issue_ids) - 1
         echo "Reached the last issue"
@@ -637,13 +637,20 @@ function! kw#_next_issue(ofs) abort
         echo "Reached the first issue"
         return
     endif
-    call kw#select_issue(newindex)
+    call kw#select_issue(newindex, a:jump)
 endfunction
 
-function! kw#select_issue(index) abort
+function! kw#select_issue(index, jump) abort
     let g:kw_current_issue_id = g:kw_issue_ids[a:index]
     call kw#parse_issue(g:kw_issues[g:kw_current_issue_id])
-    echo "Issue id: ".g:kw_current_issue_id." (".(a:index + 1)."/".len(g:kw_issues).") [".kw#get_current_status()."]"
+    if a:jump
+        silent cfirst
+    endif
+    let message = "Issue id: ".g:kw_current_issue_id
+    let message .= " (".(a:index + 1)."/".len(g:kw_issues).")"
+    let message .= " [".kw#get_current_status()."]"
+    let message .= " ".g:kw_current_issue["message"]
+    echo message
 endfunction
 
 function! kw#complete_issue_ids(ArgLead, CmdLine, CursorPos) abort
@@ -653,7 +660,7 @@ function! kw#complete_issue_ids(ArgLead, CmdLine, CursorPos) abort
     return tmp_list
 endfunction
 
-function! kw#get_issue(...) abort
+function! kw#get_issue(jump, ...) abort
     if !exists("g:kw_issues")
         echoerr "g:kw_issues is not set"
         return
@@ -668,7 +675,7 @@ function! kw#get_issue(...) abort
         echoerr "no such issue"
         return
     endif
-    call kw#select_issue(index)
+    call kw#select_issue(index, a:jump)
 endfunction
 
 function! kw#set_status(ids, status) abort
