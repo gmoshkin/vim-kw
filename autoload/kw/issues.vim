@@ -1,72 +1,78 @@
-if !exists("g:kw_issues_max_height")
-    let g:kw_issues_max_height = 20
-endif
+function! kw#issues#complete_ids(ArgLead, CmdLine, CursorPos) abort
+    let tmp_list = kw#utils#complete(get(g:, "kw_issue_ids", []), a:ArgLead)
+    call map(tmp_list, 'v:val.""')
+    return tmp_list
+endfunction
 
-function! kw#issues#update_buffer(lastpos) abort
-    highlight! KWIssue ctermbg=3 ctermfg=0
-    let issueline = g:kw_current_issue_index + 1
-    if a:lastpos
-        let pos = [ line('.'), col('.') ]
-    else
-        let pos = [ issueline, 1 ]
+function! kw#issues#select(index, jump) abort
+    let g:kw_current_issue_index = a:index
+    let g:kw_current_issue_id = g:kw_issue_ids[g:kw_current_issue_index]
+    call kw#parse#issue(g:kw_issues[g:kw_current_issue_id])
+    if a:jump
+        silent cfirst
     endif
-    let issues = kw#get_issues(0)
-    setlocal modifiable
-    %delete
-    call append(0, issues)
-    $delete
-    setlocal nomodifiable
-    call cursor(pos)
-    execute 'match KWIssue /\%'.issueline.'l/'
+    let message = "Issue id: ".g:kw_current_issue_id
+    let message .= " (".(a:index + 1)."/".len(g:kw_issues).")"
+    let message .= " [".kw#status#get_current_status()."]"
+    let message .= " ".g:kw_current_issue["message"]
+    echo message
 endfunction
 
-function! kw#issues#set_options() abort
-    setlocal buftype=nofile
-    setlocal bufhidden=delete
-    setlocal noswapfile
-    setlocal nowrap
-    setlocal previewwindow
-    setlocal nomodifiable
-    setlocal nomodified
-endfunction
-
-function! kw#issues#goto_issue() abort
-    let index = line('.') - 1
-    wincmd p
-    call kw#select_issue(index, 1)
-    pclose
-endfunction
-
-function! kw#issues#this_issue_id() abort
-    if !exists("g:kw_issue_ids")
-        echoerr "g:kw_issue_ids is not set"
+function! kw#issues#offset(ofs, jump) abort
+    let newindex = g:kw_current_issue_index + a:ofs
+    if a:ofs > 0 && newindex > len(g:kw_issue_ids) - 1
+        echo "Reached the last issue"
+        return
+    elseif a:ofs < 0 && newindex < 0
+        echo "Reached the first issue"
         return
     endif
-    return g:kw_issue_ids[line('.') - 1]
+    call kw#issues#select(newindex, a:jump)
 endfunction
 
-function! kw#issues#change_status() abort
-    let id = kw#issues#this_issue_id()
-    call kw#current_status(id)
-    call kw#issues#update_buffer(1)
+function! kw#issues#prev(jump) abort
+    call kw#issues#offset(-1, a:jump)
 endfunction
 
-function! kw#issues#set_mappings() abort
-    nnoremap <buffer> <CR> :<C-U>call kw#issues#goto_issue()<CR>
-    nnoremap <buffer> cs :<C-U>call kw#issues#change_status()<CR>
+function! kw#issues#next(jump) abort
+    call kw#issues#offset(+1, a:jump)
 endfunction
 
-function! kw#issues#open() abort
+function! kw#issues#get(jump, ...) abort
     if !exists("g:kw_issues")
         echoerr "g:kw_issues is not set"
         return
     endif
-    pclose
-    let height = min([len(g:kw_issues), g:kw_issues_max_height])
-    execute "belowright ".height."new kwissues"
-    call kw#issues#update_buffer(0)
-    setfiletype kwissues
-    call kw#issues#set_options()
-    call kw#issues#set_mappings()
-    redraw
+    if a:0 > 0 && !empty(a:1)
+        let id = a:1
+    else
+        let id = input("Id: ", g:kw_current_issue_id, "customlist,kw#issues#complete_ids")
+    endif
+    let index = index(g:kw_issue_ids, id + 0)
+    if index < 0
+        echoerr "no such issue"
+        return
+    endif
+    call kw#issues#select(index, a:jump)
+endfunction
+
+function! kw#issues#get(echo) abort
+    if !exists("g:kw_issues")
+        echoerr "g:kw_issues is not set"
+        return
+    endif
+    let issues = []
+    for d in values(g:kw_issues)
+        let fields = [ d["code"], d["id"], d["status"] ]
+        if d["id"] ==? g:kw_current_issue_id && a:echo
+            call add(fields, "<---")
+        endif
+        call add(issues, join(fields, " "))
+    endfor
+    return sort(issues)
+endfunction
+
+function! kw#issues#show() abort
+    let issues = kw#issues#get(1)
+    echo join(issues, "\n")
 endfunction

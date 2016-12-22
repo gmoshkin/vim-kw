@@ -15,15 +15,15 @@ command! KWCurrentStatus call kw#status#current_status()
 
 command! KWParseIssue call kw#parse#issue(getline('.'))
 
-command! KWNextIssue call kw#next_issue(1)
-command! KWPrevIssue call kw#prev_issue(1)
+command! KWNextIssue call kw#issues#next(1)
+command! KWPrevIssue call kw#issues#prev(1)
 " command! KWNextAnalyze call kw#next_analyze(1)
 " command! KWPrevAnalyze call kw#prev_analyze(1)
-command! -nargs=* -complete=customlist,kw#complete_issue_ids KWIssue call kw#get_issue(1, <q-args>)
+command! -nargs=* -complete=customlist,kw#issues#complete_ids KWIssue call kw#issues#get(1, <q-args>)
 
 command! KWStats call kw#show_stats()
-command! KWShowIssues call kw#show_issues()
-command! KWOpenIssues call kw#issues#open()
+command! KWShowIssues call kw#issues#show()
+command! KWOpenIssues call kw#issuesbuf#open()
 
 nnoremap <silent> <leader>kwf :<C-U>KWFix<CR>
 nnoremap <silent> <leader>kwn :<C-U>KWNotAProblem<CR>
