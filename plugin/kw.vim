@@ -13,7 +13,7 @@ command! KWFix call kw#status#update_status(input("Id: ", g:kw_current_issue_id)
 command! KWNotAProblem call kw#status#update_status(input("Id: ", g:kw_current_issue_id), "Not a Problem")
 command! KWCurrentStatus call kw#status#current_status()
 
-command! KWParseIssue call kw#parse_issue(getline('.'))
+command! KWParseIssue call kw#parse#issue(getline('.'))
 
 command! KWNextIssue call kw#next_issue(1)
 command! KWPrevIssue call kw#prev_issue(1)

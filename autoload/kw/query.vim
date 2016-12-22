@@ -384,7 +384,7 @@ function! kw#query#search_queries(load, ...) abort
     let g:kw_last_query = join(query_params, "%2C")
     if a:load
         let response = kw#query#search_query(g:kw_last_query, "load")
-        call kw#parse_issues(response)
+        call kw#parse#issues(response)
     else
         call kw#query#search_query(g:kw_last_query, "read")
     endif
