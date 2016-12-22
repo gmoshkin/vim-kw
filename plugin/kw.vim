@@ -6,7 +6,7 @@ command! KWLoadStatus call kw#search_queries(1, "code", "status")
 command! KWSearchLastQuery %d <bar> call kw#search_last_query() <bar> 1
 
 command! -nargs=* -complete=customlist,kw#complete_projects KWProject call kw#set_project(<q-args>)
-command! KWSetSettings call kw#set_settings()
+command! KWSetSettings call kw#settings#set_settings()
 
 command! -nargs=* KWUpdateStatus call kw#update_status(<q-args>)
 command! KWFix call kw#update_status(input("Id: ", g:kw_current_issue_id), "Fix")
