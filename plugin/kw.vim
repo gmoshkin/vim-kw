@@ -22,3 +22,4 @@ nnoremap <leader>kws :<C-U>KWCurrentStatus<CR>
 nnoremap <leader>kw> :<C-U>KWParseNext<CR>
 nnoremap <leader>kw< :<C-U>KWParsePrev<CR>
 nnoremap <leader>kwp :<C-U>KWParseIssue<CR>
+nnoremap <leader>kw? :<C-U>KWStats<CR>

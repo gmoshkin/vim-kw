@@ -679,9 +679,21 @@ function! kw#get_stats(...) abort
         echoerr "g:kw_issues is not set"
         return
     endif
-    let stats = {}
-    for d in values(g:kw_issues)
-        let stats[d["status"]] = get(stats, d["status"], 0) + len(d["issueIds"])
-    endfor
+    if a:0 > 0
+        let stats = {}
+        for d in values(g:kw_issues)
+            let stats[d["status"]] = get(stats, d["status"], 0) + len(d["issueIds"])
+        endfor
+    else
+        let stats = []
+        for d in values(g:kw_issues)
+            let fields = [ d["code"], d["id"], d["status"] ]
+            if d["id"] ==? g:kw_current_issue_id
+                call add(fields, "<---")
+            endif
+            call add(stats, join(fields, " "))
+        endfor
+        let stats = join(sort(stats), "\n")
+    endif
     return stats
 endfunction
