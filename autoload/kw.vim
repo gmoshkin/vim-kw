@@ -651,7 +651,7 @@ function! kw#next_issue(jump) abort
 endfunction
 
 function! kw#_next_issue(ofs, jump) abort
-    let newindex = index(g:kw_issue_ids, g:kw_current_issue_id) + a:ofs
+    let newindex = g:kw_current_issue_index + a:ofs
     if a:ofs > 0 && newindex > len(g:kw_issue_ids) - 1
         echo "Reached the last issue"
         return
