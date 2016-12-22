@@ -635,6 +635,31 @@ function! kw#select_issue(index) abort
     echo "Issue id: ".g:kw_current_issue_id." (".(a:index + 1)."/".len(g:kw_issues).") [".kw#get_current_status()."]"
 endfunction
 
+function! kw#complete_issue_ids(ArgLead, CmdLine, CursorPos) abort
+    let tmp_list = copy(get(g:, "kw_issue_ids", []))
+    call filter(tmp_list, 'v:val =~ "^'.a:ArgLead.'"')
+    call map(tmp_list, 'v:val.""')
+    return tmp_list
+endfunction
+
+function! kw#get_issue(...) abort
+    if !exists("g:kw_issues")
+        echoerr "g:kw_issues is not set"
+        return
+    endif
+    if a:0 > 0 && !empty(a:1)
+        let id = a:1
+    else
+        let id = input("Id: ", g:kw_current_issue_id, "customlist,kw#complete_issue_ids")
+    endif
+    let index = index(g:kw_issue_ids, id + 0)
+    if index < 0
+        echoerr "no such issue"
+        return
+    endif
+    call kw#select_issue(index)
+endfunction
+
 function! kw#set_status(ids, status) abort
     if !exists("g:kw_issues")
         echoerr "g:kw_issues is not set"

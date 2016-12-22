@@ -11,6 +11,7 @@ command! KWNotAProblem call kw#update_status(input("Id: ", g:kw_current_issue_id
 command! KWParseIssue call kw#parse_issue(getline('.'))
 command! KWNextIssue call kw#next_issue()
 command! KWPrevIssue call kw#prev_issue()
+command! -nargs=* -complete=customlist,kw#complete_issue_ids KWIssue call kw#get_issue(<q-args>)
 command! KWCurrentStatus call kw#current_status()
 command! KWStats echo kw#get_stats()
 
