@@ -8,10 +8,10 @@ command! KWSearchLastQuery %d <bar> call kw#query#search_last_query() <bar> 1
 command! -nargs=* -complete=customlist,kw#settings#complete_projects KWProject call kw#settings#set_project(<q-args>)
 command! KWSetSettings call kw#settings#set_settings()
 
-command! -nargs=* KWUpdateStatus call kw#update_status(<q-args>)
-command! KWFix call kw#update_status(input("Id: ", g:kw_current_issue_id), "Fix")
-command! KWNotAProblem call kw#update_status(input("Id: ", g:kw_current_issue_id), "Not a Problem")
-command! KWCurrentStatus call kw#current_status()
+command! -nargs=* KWUpdateStatus call kw#status#update_status(<q-args>)
+command! KWFix call kw#status#update_status(input("Id: ", g:kw_current_issue_id), "Fix")
+command! KWNotAProblem call kw#status#update_status(input("Id: ", g:kw_current_issue_id), "Not a Problem")
+command! KWCurrentStatus call kw#status#current_status()
 
 command! KWParseIssue call kw#parse_issue(getline('.'))
 
