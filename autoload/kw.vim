@@ -712,26 +712,35 @@ function! kw#current_status() abort
     endif
 endfunction
 
-function! kw#get_stats(...) abort
+function! kw#show_stats(...) abort
     if !exists("g:kw_issues")
         echoerr "g:kw_issues is not set"
         return
     endif
-    if a:0 > 0
-        let stats = {}
-        for d in values(g:kw_issues)
-            let stats[d["status"]] = get(stats, d["status"], 0) + len(d["issueIds"])
-        endfor
-    else
-        let stats = []
-        for d in values(g:kw_issues)
-            let fields = [ d["code"], d["id"], d["status"] ]
-            if d["id"] ==? g:kw_current_issue_id
-                call add(fields, "<---")
-            endif
-            call add(stats, join(fields, " "))
-        endfor
-        let stats = join(sort(stats), "\n")
+    let stats = {}
+    for d in values(g:kw_issues)
+        let stats[d["status"]] = get(stats, d["status"], 0) + len(d["issueIds"])
+    endfor
+    let result = g:kw_current_issue["code"].": "
+    for [ k, v ] in items(stats)
+        let result .= k." - ".v."; "
+    endfor
+    return result
+endfunction
+
+function! kw#show_issues() abort
+    if !exists("g:kw_issues")
+        echoerr "g:kw_issues is not set"
+        return
     endif
-    return stats
+    let stats = []
+    for d in values(g:kw_issues)
+        let fields = [ d["code"], d["id"], d["status"] ]
+        if d["id"] ==? g:kw_current_issue_id
+            call add(fields, "<---")
+        endif
+        call add(stats, join(fields, " "))
+    endfor
+    let stats = join(sort(stats), "\n")
+    echo stats
 endfunction
