@@ -423,6 +423,7 @@ function! kw#get_status_history(...) abort
 endfunction
 
 function! kw#get_query(key) abort
+    " TODO: refactor, remove duplicate code
     if a:key ==? "code"
         if !exists("g:kw_last_code")
             let g:kw_last_code = ""
@@ -431,6 +432,14 @@ function! kw#get_query(key) abort
         let res = input("Checker code: ", default, "customlist,kw#complete_checkers")
         let g:kw_last_code = res
         return g:kw_last_code
+    elseif a:key ==? "status"
+        if !exists("g:kw_last_status")
+            let g:kw_last_status = ""
+        endif
+        let default = g:kw_last_status
+        let res = input("Status: ", default, "customlist,kw#get_status_history")
+        let g:kw_last_status = res
+        return "%2B".g:kw_last_status
     endif
 endfunction
 
@@ -488,6 +497,7 @@ function! kw#search_queries(load, ...) abort
     for a in a:000
         call add(query_params, a.":".kw#get_query(a))
     endfor
+    let g:kw_last_query = join(query_params, "%2C")
     if a:load
         let response = kw#search_query(g:kw_last_query, "load")
         call kw#parse_issues(response)
@@ -532,9 +542,10 @@ function! kw#send_request(request, ...) abort
     endif
     let cmd = prefix.'curl '.curl_options.' --data "'.a:request.'" '.address
     if execute
-        " echom "executing '".cmd."'"
+        " echoerr "executing '".cmd."'"
         execute cmd
     else
+        " echoerr "executing '".cmd."'"
         let g:kw_last_response = systemlist(cmd)
         return g:kw_last_response
     endif
