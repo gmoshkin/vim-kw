@@ -422,7 +422,7 @@ function! kw#get_status_history(...) abort
     return get(g:, "kw_status_history", [])
 endfunction
 
-function! kw#set_query(key) abort
+function! kw#get_query(key) abort
     if a:key ==? "code"
         if !exists("g:kw_last_code")
             let g:kw_last_code = ""
@@ -480,29 +480,20 @@ function! kw#update_status(ids, status, ...) abort
     echo json_decode(response[0])["status_message"]
 endfunction
 
-function! kw#load_queries(...) abort
+function! kw#search_queries(load, ...) abort
     if a:0 == 0
         return
     endif
     let query_params = []
     for a in a:000
-        call add(query_params, a.":".kw#set_query(a))
+        call add(query_params, a.":".kw#get_query(a))
     endfor
-    let g:kw_last_query = join(query_params, ",")
-    let response = kw#search_query(g:kw_last_query, "load")
-    call kw#parse_issues(response)
-endfunction
-
-function! kw#search_queries(...) abort
-    if a:0 == 0
-        return
+    if a:load
+        let response = kw#search_query(g:kw_last_query, "load")
+        call kw#parse_issues(response)
+    else
+        call kw#search_query(g:kw_last_query, "read")
     endif
-    let query_params = []
-    for a in a:000
-        call add(query_params, a.":".kw#set_query(a))
-    endfor
-    let g:kw_last_query = join(query_params, ",")
-    call kw#search_query(g:kw_last_query, "read")
 endfunction
 
 function! kw#search_last_query() abort

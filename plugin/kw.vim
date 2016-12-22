@@ -1,8 +1,8 @@
 "TODO: add completion for searchable queries
-command! -nargs=* KWSearchQueries %d <bar> call kw#search_queries(<q-args>)
+command! -nargs=* KWSearchQueries %d <bar> call kw#search_queries(1, <q-args>)
 command! KWSearchLastQuery %d <bar> call kw#search_last_query() <bar> 1
-command! KWSearchCode %d <bar> call kw#search_queries("code")
-command! KWLoadCode call kw#load_queries("code")
+command! KWSearchCode %d <bar> call kw#search_queries(1, "code")
+command! KWLoadCode call kw#search_queries(1, "code")
 command! -nargs=1 KWSetQuery let g:kw_searchquery=<q-args>
 command! KWSetSettings call kw#set_settings()
 command! -nargs=* KWUpdateStatus call kw#update_status(<q-args>)
