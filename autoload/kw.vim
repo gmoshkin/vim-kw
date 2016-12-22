@@ -414,8 +414,12 @@ function! kw#set_user() abort
     let g:kw_settings["user"] = input("Username: ", g:kw_settings["user"])
 endfunction
 
-function! kw#set_project() abort
-    let project = input("Project: ", g:kw_settings["project"], "customlist,kw#complete_projects")
+function! kw#set_project(...) abort
+    if a:0 > 0 && !empty(a:1)
+        let project = a:1
+    else
+        let project = input("Project: ", g:kw_settings["project"], "customlist,kw#complete_projects")
+    endif
     call kw#add_to_history("projects", project)
     let g:kw_settings["project"] = project
 endfunction
