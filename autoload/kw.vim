@@ -353,19 +353,53 @@ if !exists("g:kw_statuses")
     let g:kw_statuses = [ "Fix", "Not a problem", "Fix in Next Release" ]
 endif
 
-if !exists("g:kw_status_history")
-    let g:kw_status_history = get(g:, "kw_statuses", {})
+if !exists("g:kw_history")
+    let g:kw_history = {
+            \ "status" : get(g:, "kw_statuses", []),
+            \ "comments" : [],
+            \ "projects" : get(g:, "kw_projects", []),
+        \ }
 endif
 
 function! kw#update_checkers(codes) abort
     "TODO
 endfunction
 
-function! kw#complete_checkers(ArgLead, CmdLine, CursorPos) abort
-    " TODO: complete subcodes separated buy "."
-    let tmp_list = g:kw_checkers_cs + g:kw_checkers_cpp
+function! kw#complete(list, ArgLead)
+    let tmp_list = copy(a:list)
     call filter(tmp_list, 'v:val =~ "^'.a:ArgLead.'"')
     return tmp_list
+endfunction
+
+function! kw#complete_checkers(ArgLead, CmdLine, CursorPos) abort
+    " TODO: complete subcodes separated buy "."
+    return kw#complete(g:kw_checkers_cs + g:kw_checkers_cpp, a:ArgLead)
+endfunction
+
+function! kw#complete_projects(ArgLead, CmdLine, CursorPos) abort
+    return kw#complete(get(g:kw_history, "projects", []), a:ArgLead)
+endfunction
+
+function! kw#complete_comments(ArgLead, CmdLine, CursorPos) abort
+    return kw#complete(get(g:kw_history, "comments", []), a:ArgLead)
+endfunction
+
+function! kw#complete_status(ArgLead, CmdLine, CursorPos) abort
+    return kw#complete(get(g:kw_history, "status", []), a:ArgLead)
+endfunction
+
+function! kw#complete_issue_ids(ArgLead, CmdLine, CursorPos) abort
+    let tmp_list = kw#complete(get(g:, "kw_issue_ids", []), a:ArgLead)
+    call map(tmp_list, 'v:val.""')
+    return tmp_list
+endfunction
+
+function! kw#add_to_history(type, value) abort
+    let history = get(g:kw_history, a:type, [])
+    if !empty(a:value) && index(history, a:value) < 0
+        call add(history, a:value)
+        let g:kw_history[a:type] = history
+    endif
 endfunction
 
 function! kw#set_host() abort
@@ -381,7 +415,9 @@ function! kw#set_user() abort
 endfunction
 
 function! kw#set_project() abort
-    let g:kw_settings["project"] = input("Project: ", g:kw_settings["project"])
+    let project = input("Project: ", g:kw_settings["project"], "customlist,kw#complete_projects")
+    call kw#add_to_history("projects", project)
+    let g:kw_settings["project"] = project
 endfunction
 
 function! kw#set_settings() abort
@@ -395,39 +431,12 @@ function! kw#get_comment(status) abort
     let default = ""
     if exists("g:kw_last_comments")
         let default = get(g:kw_last_comments, a:status, "")
-        call kw#add_to_comment_history(default)
+        call kw#add_to_history("comment", default)
     endif
-    let result = input("Comment: ", default, "customlist,kw#get_comments_history")
+    let result = input("Comment: ", default, "customlist,kw#complete_comments")
     let g:kw_last_comments[a:status] = result
-    call kw#add_to_comment_history(result)
+    call kw#add_to_history("comment", result)
     return result
-endfunction
-
-" TODO: remove duplicated code
-function! kw#add_to_comment_history(comment) abort
-    if !exists("g:kw_comments_history")
-        let g:kw_comments_history = []
-    endif
-    if !empty(a:comment) && index(g:kw_comments_history, a:comment) < 0
-        call add(g:kw_comments_history, a:comment)
-    endif
-endfunction
-
-function! kw#get_comments_history(...) abort
-    return get(g:, "kw_comments_history", [])
-endfunction
-
-function! kw#add_to_status_history(status) abort
-    if !exists("g:kw_status_history")
-        let g:kw_status_history = []
-    endif
-    if !empty(a:status) && index(g:kw_status_history, a:status) < 0
-        call add(g:kw_status_history, a:status)
-    endif
-endfunction
-
-function! kw#get_status_history(...) abort
-    return get(g:, "kw_status_history", [])
 endfunction
 
 function! kw#get_query(key) abort
@@ -445,7 +454,7 @@ function! kw#get_query(key) abort
             let g:kw_last_status = ""
         endif
         let default = g:kw_last_status
-        let res = input("Status: ", default, "customlist,kw#get_status_history")
+        let res = input("Status: ", default, "customlist,kw#complete_status")
         let g:kw_last_status = res
         return "%2B".g:kw_last_status
     endif
@@ -661,13 +670,6 @@ function! kw#select_issue(index, jump) abort
     echo message
 endfunction
 
-function! kw#complete_issue_ids(ArgLead, CmdLine, CursorPos) abort
-    let tmp_list = copy(get(g:, "kw_issue_ids", []))
-    call filter(tmp_list, 'v:val =~ "^'.a:ArgLead.'"')
-    call map(tmp_list, 'v:val.""')
-    return tmp_list
-endfunction
-
 function! kw#get_issue(jump, ...) abort
     if !exists("g:kw_issues")
         echoerr "g:kw_issues is not set"
@@ -713,8 +715,8 @@ function! kw#current_status() abort
         echoerr "g:kw_current_issue is not set"
         return
     endif
-    let new = input("Status: ", cur, "customlist,kw#get_status_history")
-    call kw#add_to_status_history(new)
+    let new = input("Status: ", cur, "customlist,kw#complete_status")
+    call kw#add_to_history("status", new)
     if cur !=? new
         call kw#update_status(g:kw_current_issue_id, new)
     endif
