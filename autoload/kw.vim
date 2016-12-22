@@ -372,9 +372,9 @@ function! kw#set_settings() abort
     if !exists("g:kw_settings")
         let g:kw_settings = {
             \ "host": "localhost",
-            \ "port": 9090,
-            \ "user": "gmoshkin",
-            \ "project": "cudafy",
+            \ "port": 8080,
+            \ "user": "username",
+            \ "project": "project",
             \ }
     endif
     let g:kw_settings["host"] = input("Hostname: ", g:kw_settings["host"])
