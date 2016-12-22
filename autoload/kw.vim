@@ -465,36 +465,6 @@ function! kw#get_query(key) abort
     endif
 endfunction
 
-function! kw#get_request_string(action, params) abort
-    if !exists("g:kw_settings")
-        echoerr "g:kw_settings is unset"
-        return ""
-    endif
-    let params = []
-    call add(params, "action=".a:action)
-    call add(params, "user=".g:kw_settings["user"])
-    call add(params, "project=".g:kw_settings["project"])
-    for [k, v] in items(a:params)
-        call add(params, k."=".substitute(v, " ", "+", "g"))
-    endfor
-    if index(keys(a:params), "owner") < 0
-        call add(params, "owner=".g:kw_settings["user"])
-    endif
-    let request = join(params, "&")
-    return request
-endfunction
-
-function! kw#get_address_string() abort
-    if !exists("g:kw_settings")
-        echoerr "g:kw_settings is unset"
-        return ""
-    endif
-    let address = "http://"
-    let address .= g:kw_settings["host"].":".g:kw_settings["port"]
-    let address .= "/review/api"
-    return address
-endfunction
-
 function! kw#update_status(ids, status, ...) abort
     call kw#set_status(a:ids, a:status)
     let comment = ""
@@ -506,8 +476,7 @@ function! kw#update_status(ids, status, ...) abort
         \ "status" : a:status,
         \ "comment" : comment,
         \ }
-    let request = kw#get_request_string("update_status", params)
-    let response = kw#send_request(request, "load")
+    let response = kw#request#request("update_status", params, "load")
     echo json_decode(response[0])["status_message"]
 endfunction
 
@@ -540,37 +509,7 @@ function! kw#search_query(query, action) abort
     let params = {
         \ "query" : a:query
         \ }
-    let request = kw#get_request_string("search", params)
-    return kw#send_request(request, a:action)
-endfunction
-
-function! kw#send_request(request, ...) abort
-    let address = kw#get_address_string()
-    let prefix = ""
-    let curl_options = ""
-    if a:0 > 0
-        if a:1 ==? "read"
-            let execute = 1
-            let prefix = "read !"
-            let curl_options = "--stderr /dev/null"
-        elseif a:1 ==? "load"
-            let execute = 0
-            let prefix = ""
-            let curl_options = "--stderr /dev/null"
-        endif
-    else
-        let prefix = "!"
-        let execute = 1
-    endif
-    let cmd = prefix.'curl '.curl_options.' --data "'.a:request.'" '.address
-    if execute
-        " echoerr "executing '".cmd."'"
-        execute cmd
-    else
-        " echoerr "executing '".cmd."'"
-        let g:kw_last_response = systemlist(cmd)
-        return g:kw_last_response
-    endif
+    return kw#request#request("search", params, a:action)
 endfunction
 
 function! kw#parse_issues(issues) abort
