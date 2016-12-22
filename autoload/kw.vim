@@ -576,7 +576,8 @@ function! kw#parse_issues(issues) abort
     endfor
     let g:kw_issue_ids = sort(map(keys(g:kw_issues), 'v:val + 0'))
     if len(g:kw_issue_ids) > 0
-        let g:kw_current_issue_id = g:kw_issue_ids[0]
+        let g:kw_current_issue_index = 0
+        let g:kw_current_issue_id = g:kw_issue_ids[g:kw_current_issue_index]
         call kw#parse_issue(g:kw_issues[g:kw_current_issue_id])
     endif
     echo 'Loaded '.len(g:kw_issues).' issues. Current issue id is '.g:kw_current_issue_id
@@ -658,7 +659,8 @@ function! kw#_next_issue(ofs, jump) abort
 endfunction
 
 function! kw#select_issue(index, jump) abort
-    let g:kw_current_issue_id = g:kw_issue_ids[a:index]
+    let g:kw_current_issue_index = a:index
+    let g:kw_current_issue_id = g:kw_issue_ids[g:kw_current_issue_index]
     call kw#parse_issue(g:kw_issues[g:kw_current_issue_id])
     if a:jump
         silent cfirst
@@ -701,16 +703,25 @@ function! kw#set_status(ids, status) abort
     endfor
 endfunction
 
-function! kw#get_current_status() abort
-    if exists("g:kw_current_issue")
-        return g:kw_current_issue["status"]
-    else
+function! kw#get_current_status(...) abort
+    if !exists("g:kw_issues")
         return ""
     endif
+    if a:0 > 0
+        let issue = g:kw_issues[a:1]
+    else
+        let issue = g:kw_current_issue
+    endif
+    return issue["status"]
 endfunction
 
-function! kw#current_status() abort
-    let cur = kw#get_current_status()
+function! kw#current_status(...) abort
+    if a:0 > 0
+        let id = a:1
+    else
+        let id = g:kw_current_issue_id
+    endif
+    let cur = kw#get_current_status(id)
     if empty(cur)
         echoerr "g:kw_current_issue is not set"
         return
@@ -718,7 +729,7 @@ function! kw#current_status() abort
     let new = input("Status: ", cur, "customlist,kw#complete_status")
     call kw#add_to_history("status", new)
     if cur !=? new
-        call kw#update_status(g:kw_current_issue_id, new)
+        call kw#update_status(id, new)
     endif
 endfunction
 
@@ -738,19 +749,23 @@ function! kw#show_stats(...) abort
     return result
 endfunction
 
-function! kw#show_issues() abort
+function! kw#get_issues() abort
     if !exists("g:kw_issues")
         echoerr "g:kw_issues is not set"
         return
     endif
-    let stats = []
+    let issues = []
     for d in values(g:kw_issues)
         let fields = [ d["code"], d["id"], d["status"] ]
         if d["id"] ==? g:kw_current_issue_id
             call add(fields, "<---")
         endif
-        call add(stats, join(fields, " "))
+        call add(issues, join(fields, " "))
     endfor
-    let stats = join(sort(stats), "\n")
-    echo stats
+    return sort(issues)
+endfunction
+
+function! kw#show_issues() abort
+    let issues = kw#get_issues()
+    echo join(issues, "\n")
 endfunction

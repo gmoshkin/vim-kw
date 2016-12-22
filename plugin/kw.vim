@@ -15,9 +15,9 @@ command! KWNextIssue call kw#next_issue(1)
 command! KWPrevIssue call kw#prev_issue(1)
 command! -nargs=* -complete=customlist,kw#complete_issue_ids KWIssue call kw#get_issue(1, <q-args>)
 command! KWCurrentStatus call kw#current_status()
-"TODO: add a command for showing the selectable list of issues in a new window
 command! KWShowIssues call kw#show_issues()
 command! KWStats call kw#show_stats()
+command! KWOpenIssues call kw#issues#open()
 
 nnoremap <silent> <leader>kwf :<C-U>KWFix<CR>
 nnoremap <silent> <leader>kwn :<C-U>KWNotAProblem<CR>
@@ -26,6 +26,7 @@ nnoremap <silent> <leader>kwc :<C-U>KWLoadCode<CR>
 nnoremap <silent> <leader>kws :<C-U>KWCurrentStatus<CR>
 nnoremap <silent> <leader>kw> :<C-U>KWNextIssue<CR>
 nnoremap <silent> <leader>kw< :<C-U>KWPrevIssue<CR>
+nnoremap <silent> <leader>kwo :<C-U>KWOpenIssues<CR>
 nnoremap <silent> <leader>kwp :<C-U>KWParseIssue<CR>
 nnoremap <silent> <leader>kw? :<C-U>KWShowIssues<CR>
 nnoremap <silent> <leader>kwi :<C-U>KWIssue<CR>
