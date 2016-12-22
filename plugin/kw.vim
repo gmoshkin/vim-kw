@@ -26,5 +26,5 @@ nnoremap <silent> <leader>kw< :<C-U>KWPrevIssue<CR>
 nnoremap <silent> <leader>kwp :<C-U>KWParseIssue<CR>
 nnoremap <silent> <leader>kw? :<C-U>KWStats<CR>
 nnoremap <silent> <leader>kwi :<C-U>KWIssue<CR>
-nnoremap <silent> ]I :<C-U>KWNextIssue<CR>
-nnoremap <silent> [I :<C-U>KWPrevIssue<CR>
+nnoremap <silent> ]K :<C-U>KWNextIssue<CR>
+nnoremap <silent> [K :<C-U>KWPrevIssue<CR>
