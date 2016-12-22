@@ -368,19 +368,27 @@ function! kw#complete_checkers(ArgLead, CmdLine, CursorPos) abort
     return tmp_list
 endfunction
 
-function! kw#set_settings() abort
-    if !exists("g:kw_settings")
-        let g:kw_settings = {
-            \ "host": "localhost",
-            \ "port": 8080,
-            \ "user": "username",
-            \ "project": "project",
-            \ }
-    endif
+function! kw#set_host() abort
     let g:kw_settings["host"] = input("Hostname: ", g:kw_settings["host"])
+endfunction
+
+function! kw#set_port() abort
     let g:kw_settings["port"] = input("Port: ", g:kw_settings["port"])
+endfunction
+
+function! kw#set_user() abort
     let g:kw_settings["user"] = input("Username: ", g:kw_settings["user"])
-    let g:kw_settings["project"] = input("Username: ", g:kw_settings["project"])
+endfunction
+
+function! kw#set_project() abort
+    let g:kw_settings["project"] = input("Project: ", g:kw_settings["project"])
+endfunction
+
+function! kw#set_settings() abort
+    call kw#set_host()
+    call kw#set_port()
+    call kw#set_user()
+    call kw#set_project()
 endfunction
 
 function! kw#get_comment(status) abort
