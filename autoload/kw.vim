@@ -395,6 +395,7 @@ function! kw#complete_issue_ids(ArgLead, CmdLine, CursorPos) abort
 endfunction
 
 function! kw#add_to_history(type, value) abort
+    " TODO: sort the entries by time
     let history = get(g:kw_history, a:type, [])
     if !empty(a:value) && index(history, a:value) < 0
         call add(history, a:value)
@@ -753,7 +754,7 @@ function! kw#show_stats(...) abort
     return result
 endfunction
 
-function! kw#get_issues() abort
+function! kw#get_issues(echo) abort
     if !exists("g:kw_issues")
         echoerr "g:kw_issues is not set"
         return
@@ -761,7 +762,7 @@ function! kw#get_issues() abort
     let issues = []
     for d in values(g:kw_issues)
         let fields = [ d["code"], d["id"], d["status"] ]
-        if d["id"] ==? g:kw_current_issue_id
+        if d["id"] ==? g:kw_current_issue_id && a:echo
             call add(fields, "<---")
         endif
         call add(issues, join(fields, " "))
@@ -770,6 +771,6 @@ function! kw#get_issues() abort
 endfunction
 
 function! kw#show_issues() abort
-    let issues = kw#get_issues()
+    let issues = kw#get_issues(1)
     echo join(issues, "\n")
 endfunction

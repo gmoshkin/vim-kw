@@ -3,18 +3,21 @@ if !exists("g:kw_issues_max_height")
 endif
 
 function! kw#issues#update_buffer(lastpos) abort
+    highlight! KWIssue ctermbg=3 ctermfg=0
+    let issueline = g:kw_current_issue_index + 1
     if a:lastpos
         let pos = [ line('.'), col('.') ]
     else
-        let pos = [ g:kw_current_issue_index + 1, 1 ]
+        let pos = [ issueline, 1 ]
     endif
-    let issues = kw#get_issues()
+    let issues = kw#get_issues(0)
     setlocal modifiable
     %delete
     call append(0, issues)
     $delete
     setlocal nomodifiable
     call cursor(pos)
+    execute 'match KWIssue /\%'.issueline.'l/'
 endfunction
 
 function! kw#issues#set_options() abort
