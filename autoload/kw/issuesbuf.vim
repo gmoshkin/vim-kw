@@ -10,7 +10,7 @@ function! kw#issuesbuf#update(savepos) abort
     else
         let pos = [ issueline, 1 ]
     endif
-    let issues = kw#issues#get(0)
+    let issues = kw#issues#get_all(0)
     setlocal modifiable
     %delete
     call append(0, issues)
@@ -23,7 +23,7 @@ endfunction
 function! kw#issuesbuf#select_issue() abort
     let index = line('.') - 1
     wincmd p
-    call kw#select_issue(index, 1)
+    call kw#issues#select(index, 1)
     pclose
 endfunction
 

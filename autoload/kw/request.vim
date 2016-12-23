@@ -58,7 +58,7 @@ function! kw#request#send(request, ...) abort
 endfunction
 
 function! kw#request#request(action, params, result) abort
-    let request = kw#get_request_string(a:action, a:params)
+    let request = kw#request#get_request_string(a:action, a:params)
     let response = kw#request#send(request, a:result)
     return response
 endfunction

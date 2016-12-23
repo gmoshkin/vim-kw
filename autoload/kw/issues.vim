@@ -56,7 +56,7 @@ function! kw#issues#get(jump, ...) abort
     call kw#issues#select(index, a:jump)
 endfunction
 
-function! kw#issues#get(echo) abort
+function! kw#issues#get_all(echo) abort
     if !exists("g:kw_issues")
         echoerr "g:kw_issues is not set"
         return
@@ -73,6 +73,6 @@ function! kw#issues#get(echo) abort
 endfunction
 
 function! kw#issues#show() abort
-    let issues = kw#issues#get(1)
+    let issues = kw#issues#get_all(1)
     echo join(issues, "\n")
 endfunction
