@@ -5,7 +5,7 @@ command! KWLoadCode call kw#query#search_queries(1, "code")
 command! KWLoadStatus call kw#query#search_queries(1, "code", "status")
 command! KWSearchLastQuery %d <bar> call kw#query#search_last_query() <bar> 1
 
-command! -nargs=* -complete=customlist,kw#settings#complete_projects KWProject call kw#settings#set_project(<q-args>)
+command! -nargs=* -complete=customlist,kw#history#complete_projects KWProject call kw#settings#set_project(<q-args>)
 command! KWSetSettings call kw#settings#set_settings()
 
 command! -nargs=* KWUpdateStatus call kw#status#update_status(<q-args>)

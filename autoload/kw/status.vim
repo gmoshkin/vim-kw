@@ -2,11 +2,11 @@ function! kw#status#get_comment(status) abort
     let default = ""
     if exists("g:kw_last_comments")
         let default = get(g:kw_last_comments, a:status, "")
-        call kw#add_to_history("comment", default)
+        call kw#history#add("comment", default)
     endif
     let result = input("Comment: ", default, "customlist,kw#history#complete_comments")
     let g:kw_last_comments[a:status] = result
-    call kw#add_to_history("comment", result)
+    call kw#history#add("comment", result)
     return result
 endfunction
 
@@ -62,7 +62,7 @@ function! kw#status#current_status(...) abort
         return
     endif
     let new = input("Status: ", cur, "customlist,kw#history#complete_status")
-    call kw#add_to_history("status", new)
+    call kw#history#add("status", new)
     if cur !=? new
         call kw#status#update_status(id, new)
     endif

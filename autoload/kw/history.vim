@@ -26,7 +26,7 @@ function! kw#history#complete_status(ArgLead, CmdLine, CursorPos) abort
     return kw#utils#complete(get(g:kw_history, "status", []), a:ArgLead)
 endfunction
 
-function! kw#add_to_history(type, value) abort
+function! kw#history#add(type, value) abort
     " TODO: sort the entries by time
     let history = get(g:kw_history, a:type, [])
     if !empty(a:value) && index(history, a:value) < 0

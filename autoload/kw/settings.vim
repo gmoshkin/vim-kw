@@ -23,9 +23,9 @@ function! kw#settings#set_project(...) abort
     if a:0 > 0 && !empty(a:1)
         let project = a:1
     else
-        let project = input("Project: ", g:kw_settings["project"], "customlist,kw#settings#complete_projects")
+        let project = input("Project: ", g:kw_settings["project"], "customlist,kw#history#complete_projects")
     endif
-    call kw#settings#add_to_history("projects", project)
+    call kw#history#add("projects", project)
     let g:kw_settings["project"] = project
 endfunction
 
