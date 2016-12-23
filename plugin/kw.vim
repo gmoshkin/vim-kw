@@ -22,6 +22,7 @@ command! KWPrevIssue call kw#issues#prev(1)
 command! -nargs=* -complete=customlist,kw#issues#complete_ids KWIssue call kw#issues#get(1, <q-args>)
 
 command! KWStats call kw#show_stats()
+command! -nargs=* -complete=customlist,kw#issues#complete_ids KWOpenInBrowser call kw#open_in_browser(<q-args>)
 command! KWShowIssues call kw#issues#show()
 command! KWOpenIssues call kw#issuesbuf#open()
 
