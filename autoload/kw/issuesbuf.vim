@@ -49,6 +49,7 @@ function! kw#issuesbuf#set_options() abort
     setlocal previewwindow
     setlocal nomodifiable
     setlocal nomodified
+    setlocal colorcolumn=
 endfunction
 
 function! kw#issuesbuf#set_mappings() abort
