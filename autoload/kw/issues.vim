@@ -64,8 +64,13 @@ function! kw#issues#get_all(echo) abort
     let issues = []
     for d in values(g:kw_issues)
         let fields = [ d["code"], d["id"], d["status"] ]
-        if d["id"] ==? g:kw_current_issue_id && a:echo
-            call add(fields, "<---")
+        if a:echo
+            if d["id"] ==? g:kw_current_issue_id
+                call add(fields, "<---")
+            endif
+        else
+            call add(fields, ":")
+            call add(fields, d["message"])
         endif
         call add(issues, join(fields, " "))
     endfor
