@@ -11,6 +11,7 @@ if !exists("g:kw_history")
             \ "status" : get(g:, "kw_statuses", []),
             \ "comments" : [],
             \ "projects" : get(g:, "kw_projects", []),
+            \ "id" : [],
         \ }
 endif
 
@@ -24,6 +25,10 @@ endfunction
 
 function! kw#history#complete_status(ArgLead, CmdLine, CursorPos) abort
     return kw#utils#complete(get(g:kw_history, "status", []), a:ArgLead)
+endfunction
+
+function! kw#history#complete_id(ArgLead, CmdLine, CursorPos) abort
+    return kw#utils#complete(get(g:kw_history, "id", []), a:ArgLead)
 endfunction
 
 function! kw#history#add(type, value) abort

@@ -363,6 +363,15 @@ function! kw#query#get_query(key) abort
         let res = input("Status: ", default, "customlist,kw#history#complete_status")
         let g:kw_last_status = res
         return "%2B".g:kw_last_status
+    elseif a:key ==? "id"
+        if !exists("g:kw_last_id")
+            let g:kw_last_id = ""
+        endif
+        let default = g:kw_last_id
+        let res = input("Id: ", default, "customlist,kw#history#complete_id")
+        let g:kw_last_id = res
+        call kw#history#add("id", res)
+        return res
     endif
 endfunction
 
