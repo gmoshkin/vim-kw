@@ -406,4 +406,3 @@ function! kw#query#search_last_query() abort
     endif
     call kw#query#search_query(g:kw_last_query, "read")
 endfunction
-

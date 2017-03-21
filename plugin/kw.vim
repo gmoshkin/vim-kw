@@ -4,6 +4,7 @@ command! KWSearchCode %d <bar> call kw#query#search_queries(1, "code")
 command! KWLoadId call kw#query#search_queries(1, "id")
 command! KWLoadCode call kw#query#search_queries(1, "code")
 command! KWLoadStatus call kw#query#search_queries(1, "code", "status")
+command! KWLoadProjects call kw#projects#load()
 command! KWSearchLastQuery %d <bar> call kw#query#search_last_query() <bar> 1
 
 command! -nargs=* -complete=customlist,kw#history#complete_projects KWProject call kw#settings#set_project(<q-args>)

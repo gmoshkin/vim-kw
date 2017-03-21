@@ -17,7 +17,9 @@ function! kw#request#get_request_string(action, params) abort
     let params = []
     call add(params, "action=".a:action)
     call add(params, "user=".g:kw_settings["user"])
-    call add(params, "project=".g:kw_settings["project"])
+    if a:action !=? "projects"
+        call add(params, "project=".g:kw_settings["project"])
+    endif
     for [k, v] in items(a:params)
         call add(params, k."=".substitute(v, " ", "+", "g"))
     endfor

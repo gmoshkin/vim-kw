@@ -10,7 +10,7 @@ if !exists("g:kw_history")
     let g:kw_history = {
             \ "status" : get(g:, "kw_statuses", []),
             \ "comments" : [],
-            \ "projects" : get(g:, "kw_projects", []),
+            \ "projects" : get(g:, "kw_all_projects", []),
             \ "id" : [],
         \ }
 endif

@@ -67,3 +67,12 @@ function! kw#parse#issues(issues) abort
     endif
     echo 'Loaded '.len(g:kw_issues).' issues. Current issue id is '.g:kw_current_issue_id
 endfunction
+
+function! kw#parse#projects(projects) abort
+    let g:kw_projects = []
+    for p in a:projects
+        let project = json_decode(p)
+        call add(g:kw_projects, project)
+        call kw#history#add("projects", project["name"])
+    endfor
+endfunction
