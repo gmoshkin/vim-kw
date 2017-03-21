@@ -3,6 +3,7 @@ if !exists("g:kw_settings")
         \ "host": "localhost",
         \ "port": 8080,
         \ "user": "username",
+        \ "ltoken": "",
         \ "project": "project",
         \ }
 endif
@@ -19,6 +20,10 @@ function! kw#settings#set_user() abort
     let g:kw_settings["user"] = input("Username: ", g:kw_settings["user"])
 endfunction
 
+function! kw#settings#set_ltoken() abort
+    let g:kw_settings["ltoken"] = input("ltoken: ", g:kw_settings["ltoken"])
+endfunction
+
 function! kw#settings#set_project(...) abort
     if a:0 > 0 && !empty(a:1)
         let project = a:1
@@ -33,5 +38,6 @@ function! kw#settings#set_settings() abort
     call kw#settings#set_host()
     call kw#settings#set_port()
     call kw#settings#set_user()
+    call kw#settings#set_ltoken()
     call kw#settings#set_project()
 endfunction

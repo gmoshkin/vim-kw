@@ -17,6 +17,9 @@ function! kw#request#get_request_string(action, params) abort
     let params = []
     call add(params, "action=".a:action)
     call add(params, "user=".g:kw_settings["user"])
+    if has_key(g:kw_settings, "ltoken")
+        call add(params, "ltoken=".g:kw_settings["ltoken"])
+    endif
     if a:action !=? "projects"
         call add(params, "project=".g:kw_settings["project"])
     endif
