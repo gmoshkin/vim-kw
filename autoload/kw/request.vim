@@ -52,11 +52,12 @@ function! kw#request#send(request, ...) abort
         let execute = 1
     endif
     let cmd = prefix.'curl '.curl_options.' --data "'.a:request.'" '.address
+    if exists("g:kw_debug") && g:kw_debug
+        echo "executing '".cmd."'"
+    endif
     if execute
-        " echoerr "executing '".cmd."'"
         execute cmd
     else
-        " echoerr "executing '".cmd."'"
         let g:kw_last_response = systemlist(cmd)
         return g:kw_last_response
     endif
