@@ -64,8 +64,10 @@ function! kw#parse#issues(issues) abort
         let g:kw_current_issue_index = 0
         let g:kw_current_issue_id = g:kw_issue_ids[g:kw_current_issue_index]
         call kw#parse#issue(g:kw_issues[g:kw_current_issue_id])
+        echo 'Loaded '.len(g:kw_issues).' issues. Current issue id is '.g:kw_current_issue_id
+    else
+        echo 'No issues'
     endif
-    echo 'Loaded '.len(g:kw_issues).' issues. Current issue id is '.g:kw_current_issue_id
 endfunction
 
 function! kw#parse#projects(projects) abort
