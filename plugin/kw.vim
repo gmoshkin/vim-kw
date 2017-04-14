@@ -28,6 +28,8 @@ command! -nargs=* -complete=customlist,kw#issues#complete_ids KWOpenInBrowser ca
 command! KWShowIssues call kw#issues#show()
 command! KWOpenIssues call kw#issuesbuf#open()
 
+command! -nargs=1 -complete=customlist,kw#query#complete_checkers KWLookupChecker call kw#look_up_checker(<q-args>)
+
 nnoremap <silent> <leader>kwf :<C-U>KWFix<CR>
 nnoremap <silent> <leader>kwn :<C-U>KWNotAProblem<CR>
 nnoremap <silent> <leader>kwl :<C-U>KWSearchLastQuery<CR>

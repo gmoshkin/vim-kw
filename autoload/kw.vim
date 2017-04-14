@@ -14,6 +14,10 @@ function! kw#show_stats(...) abort
     return result
 endfunction
 
+function! kw#open_url(url) abort
+    execute "!xdg-open ".fnameescape(a:url)." &>/dev/null"
+endfunction
+
 function! kw#open_in_browser(...) abort
     if !exists("g:kw_issues")
         echoerr "g:kw_issues is not set"
@@ -24,5 +28,11 @@ function! kw#open_in_browser(...) abort
     else
         let issue = g:kw_current_issue
     endif
-    execute "!xdg-open ".fnameescape(issue["url"])
+    call kw#open_url(issue["url"])
+endfunction
+
+function! kw#look_up_checker(code) abort
+    let l:url = "https://support.roguewave.com/documentation/klocwork/en/2017/"
+    let l:url .= a:code
+    call kw#open_url(l:url)
 endfunction
